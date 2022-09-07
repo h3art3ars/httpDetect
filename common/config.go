@@ -9,4 +9,5 @@ var (
 	SimplePort     bool
 	DstPort        string
 	VerySimplePort bool
+	ThreadsAmount  int
 )

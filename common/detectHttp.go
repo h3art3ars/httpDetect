@@ -6,7 +6,6 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	"github.com/schollz/progressbar/v3"
 	"net"
 	"net/http"
 	"os"
@@ -17,7 +16,7 @@ import (
 
 var ports = strings.Split(WebPort, ",")
 var (
-	routineAmount = make(chan struct{}, 1000)
+	routineAmount chan struct{}
 	urlPool       chan string
 	urlValid      []string
 	wg            sync.WaitGroup
@@ -26,6 +25,7 @@ var (
 )
 
 func DetectHttpByHost(host string, filename string) ([]string, error) {
+	routineAmount = make(chan struct{}, ThreadsAmount)
 	urlPool = make(chan string, len(ports)*len(host))
 	hosts, err := ParseIP(host, filename)
 	filePath := OutputFile
@@ -69,11 +69,21 @@ func DetectHttpByHost(host string, filename string) ([]string, error) {
 		}
 
 	}
-	bar := progressbar.Default(int64(len(ports) * len(host)))
+	if len(hosts) < 0 {
+		return nil, errors.New("null host")
+	}
+	//taskLen := int64(len(ports) * len(hosts))
+	//var bar *progressbar.ProgressBar
+	//if taskLen > 1000 {
+	//	//超过1000任务启动任务条
+	//	bar = progressbar.Default(taskLen)
+	//}
 	for _, p := range ports {
 		for _, h := range hosts {
 			wg.Add(1)
-			bar.Add(1)
+			//if taskLen > 1000 {
+			//	bar.Add(1)
+			//}
 			routineAmount <- struct{}{}
 			go detect(h, p, urlPool)
 		}
@@ -141,7 +151,7 @@ detectHttp:
 
 }
 func DetectHttpBak(host string, port string, duration int) (string, error) {
-	fmt.Printf("%s:%s\n", host, port)
+	//fmt.Printf("%s:%s\n", host, port)
 	//var duration time.Duration
 	if duration == 0 {
 		duration = 5
