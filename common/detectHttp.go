@@ -6,6 +6,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"github.com/schollz/progressbar/v3"
 	"net"
 	"net/http"
 	"os"
@@ -68,9 +69,11 @@ func DetectHttpByHost(host string, filename string) ([]string, error) {
 		}
 
 	}
+	bar := progressbar.Default(int64(len(ports) * len(host)))
 	for _, p := range ports {
 		for _, h := range hosts {
 			wg.Add(1)
+			bar.Add(1)
 			routineAmount <- struct{}{}
 			go detect(h, p, urlPool)
 		}
