@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"httpdetect/common"
+	"github.com/h3art3ars/httpDetect/common"
 )
 
 func main() {
