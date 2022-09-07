@@ -96,7 +96,7 @@ func detect(host, port string, res chan string) {
 	res <- fmt.Sprintf("%s://%s:%s", schema, host, port)
 }
 func DetectHttp(host string, port string, duration int) (string, error) {
-	fmt.Printf("%s:%s\n", host, port)
+	//fmt.Printf("%s:%s\n", host, port)
 	//var duration time.Duration
 	if duration == 0 {
 		duration = 5
