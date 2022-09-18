@@ -78,6 +78,7 @@ func DetectHttpByHost(host string, filename string) ([]string, error) {
 	//	//超过1000任务启动任务条
 	//	bar = progressbar.Default(taskLen)
 	//}
+	//fmt.Println(ports)
 	for _, p := range ports {
 		for _, h := range hosts {
 			wg.Add(1)
