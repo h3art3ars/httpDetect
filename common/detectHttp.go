@@ -20,7 +20,6 @@ var (
 	urlPool       chan string
 	urlValid      []string
 	wg            sync.WaitGroup
-	Timeout       = 20
 	File          *os.File
 )
 
@@ -53,6 +52,7 @@ func DetectHttpByHost(host string, filename string) ([]string, error) {
 				fmt.Printf("[+]URL:\t%s\n", url)
 				urlValid = append(urlValid, url)
 			}
+			<-routineAmount
 			wg.Done()
 		}
 	}()
@@ -69,22 +69,12 @@ func DetectHttpByHost(host string, filename string) ([]string, error) {
 		}
 
 	}
-	if len(hosts) < 0 {
+	if len(hosts) < 1 {
 		return nil, errors.New("null host")
 	}
-	//taskLen := int64(len(ports) * len(hosts))
-	//var bar *progressbar.ProgressBar
-	//if taskLen > 1000 {
-	//	//超过1000任务启动任务条
-	//	bar = progressbar.Default(taskLen)
-	//}
-	//fmt.Println(ports)
+	wg.Add(len(ports) * len(hosts))
 	for _, p := range ports {
 		for _, h := range hosts {
-			wg.Add(1)
-			//if taskLen > 1000 {
-			//	bar.Add(1)
-			//}
 			routineAmount <- struct{}{}
 			go detect(h, p, urlPool)
 		}
@@ -95,12 +85,6 @@ func DetectHttpByHost(host string, filename string) ([]string, error) {
 
 //阻塞方式检测port
 func detect(host, port string, res chan string) {
-
-	defer func() {
-		//group.Done()
-		<-routineAmount
-	}()
-
 	schema, err := DetectHttp(host, port, Timeout)
 	if err != nil {
 		//fmt.Println(err)
@@ -108,6 +92,7 @@ func detect(host, port string, res chan string) {
 		return
 	}
 	res <- fmt.Sprintf("%s://%s:%s", schema, host, port)
+	return
 }
 func DetectHttp(host string, port string, duration int) (string, error) {
 	//fmt.Printf("%s:%s\n", host, port)

@@ -10,4 +10,5 @@ var (
 	DstPort        string
 	VerySimplePort bool
 	ThreadsAmount  int
+	Timeout        int
 )

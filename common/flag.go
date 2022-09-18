@@ -10,4 +10,5 @@ func ParseFlag() {
 	flag.StringVar(&DstPort, "p", "", "reference port")
 	flag.BoolVar(&VerySimplePort, "ss", false, "very simple port scan, 80,443,8000,8080")
 	flag.IntVar(&ThreadsAmount, "t", 1500, "goroutine mounts")
+	flag.IntVar(&Timeout, "T", 20, "Timeout")
 }

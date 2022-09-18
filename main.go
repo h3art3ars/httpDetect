@@ -10,9 +10,10 @@ import (
 func main() {
 	common.ParseFlag()
 	flag.Parse()
-	//common.Ip = "120.24.240.33"
+	//common.UrlFile = "./url.txt"
 	//common.DstPort = "443"
 	if common.Ip == "" && common.UrlFile == "" {
+		flag.Usage()
 		fmt.Println("null host")
 		os.Exit(1)
 	}
